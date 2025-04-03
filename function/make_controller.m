@@ -9,11 +9,12 @@ function [ctr, mdl] = make_controller(mdl)
     ctr.freq_vec = [330 330 330 330];
 
     % Voltage offset
-    ctr.DV = [-40 45 -80 60];
+    % ctr.DV = [-40 45 -80 60];
+    ctr.DV = [-25 60 -60 70];
     % ctr.DV = [800 -1700 -1700 -1700]; % for checking connection
 
     % Use pre-defined trajectory
-    ctr.traj.en = 0;
+    ctr.traj.en = 1;
 
     % Yaw control enable
     ctr.yaw.en = 0;
@@ -21,17 +22,17 @@ function [ctr, mdl] = make_controller(mdl)
     % Setpoint (relative to the initital position)
     ctr.setpoint.x = 0;
     ctr.setpoint.y = 0;
-    ctr.setpoint.z = 0.06;
+    ctr.setpoint.z = 0.02;
     ctr.setpoint.yaw = deg2rad(0);
 
     % Landing and takeoff parameters
-    ctr.landing.en = 1;
-    ctr.landing.time = 0.5;
+    ctr.landing.en = 0;
+    ctr.landing.time = 0.4;
     ctr.takeoff.en = 1;
-    ctr.takeoff.time = 0.5;
+    ctr.takeoff.time = 0.2;
 
     % Attitude controller gains [ att_d att_p pos_d pos_p ]
-    ctr.factor = [0.9 0.72 0.75 0.7]; % 0.55 0.5
+    ctr.factor = [0.86 0.7 0.65 0.5]; % 0.55 0.5
     ctr.gains = [62   798    6631   13608;     % #1 pakpong nominal gains
                  36   486    2916    6561;     % #2 (S+9)^4
                  48   864    6912   20736;     % #3 (S+12)^4

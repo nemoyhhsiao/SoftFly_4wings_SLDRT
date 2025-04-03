@@ -19,7 +19,7 @@ rsim.en = 0;
 mdl.rerun = 0;
 
 % Flight time for the model
-mdl.flight_time = 2;
+mdl.flight_time = 100;
 
 % Initialize controller parameters
 [ctr, mdl] = make_controller(mdl);

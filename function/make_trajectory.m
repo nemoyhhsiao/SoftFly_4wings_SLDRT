@@ -21,7 +21,7 @@ traj.thrust_b_dot = zeros(1,(mdl.rt+1)*mdl.f);
 if traj.en
 
     % type of trajectory
-    traj.mode = 5;
+    traj.mode = 7;
 
     % time variables
     t      = mdl.T; % evolving variable for each time step
@@ -260,6 +260,45 @@ if traj.en
         traj.cf21 = 2;
         traj.cf31 = 4;
 
+    % aggressive trajectory (spiral circles)
+    elseif traj.mode == 7 
+
+        radius       = 0.08*1/0.82; % (m)
+        angular_rate = 720; % (deg/s)
+        center       = [0; 0; 0.09];
+        center_r     = center + [radius*0.5; 0; 0];
+        t_vec        = [2.1, 3, 3.2, 3.325, 5.325, 5.45, 6] - 1.995*rsim.en; % (s)
+    
+        while t <= mdl.rt
+            if t <= t_vec(1)      
+                traj.rd(:,round(t*mdl.f)) = [0; 0; 0;];     
+            elseif t <= t_vec(2)        
+                traj.rd(:,round(t*mdl.f)) = center ./(t_vec(2)-t_vec(1)).*(t-t_vec(1));   
+            elseif t <= t_vec(3)        
+                traj.rd(:,round(t*mdl.f)) = center; 
+            elseif t <= t_vec(4)               
+                traj.rd(:,round(t*mdl.f)) = center_r + [0.5*radius*cosd(-2*angular_rate*(t-t_vec(3))+180); 0.5*radius*sind(-2*angular_rate*(t-t_vec(3))+180); 0;];    
+            elseif t <= t_vec(5)               
+                traj.rd(:,round(t*mdl.f)) = [radius*cosd(angular_rate*(t-t_vec(4))); radius*sind(-angular_rate*(t-t_vec(4))); center(3) - center(3)./(t_vec(5)-t_vec(4)).*(t-t_vec(4));]; 
+            elseif t <= t_vec(6)               
+                traj.rd(:,round(t*mdl.f)) = [radius*0.5; 0; 0] + [0.5*radius*cosd(-2*angular_rate*(t-t_vec(5))); 0.5*radius*sind(-2*angular_rate*(t-t_vec(5))); 0;];  
+            elseif t <= t_vec(7)               
+                traj.rd(:,round(t*mdl.f)) = [0; 0; 0;]; 
+            % elseif t <= t_vec(8)
+            %     traj.rd(:,round(t*mdl.f)) = center - center./(t_vec(8)-t_vec(7)).*(t-t_vec(7));
+            end      
+            t = t + mdl.T;
+        end
+
+        traj.cf1  = 2.2;
+        traj.cf2  = 2.2;
+        traj.cf3  = 5;
+        traj.cf11 = 3;
+        traj.cf21 = 3;
+        traj.cf31 = 4;
+
+
+
     end
 
     % save time vector
@@ -324,7 +363,8 @@ if traj.en
     traj.rd_dd_add(1:2,:) = traj.rd_dd_add(1:2,:).*traj.force_factor;
 
     % saturation
-    limit = [1 5 20 300];
+    % limit = [1 5 20 300];
+    limit = [1 10 160 1600];
     
     % get higher order derivative
     traj.rd_d    = max(-limit(1),min(limit(1),gradient(traj.rd)./mdl.T));

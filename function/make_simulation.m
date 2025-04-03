@@ -46,7 +46,7 @@ function [rsim, rbt] = make_simulation(rbt,mdl,rsim)
 
     % Disturbance enable
     rsim.dist.pos.en = 0;
-    rsim.dist.rot.en = 1;
+    rsim.dist.rot.en = 0;
 
     % Force disturbance (N)
     rbt_mg = mdl.g * rbt.m;  % Mass
