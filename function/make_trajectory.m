@@ -1,4 +1,4 @@
-function traj = make_trajectory(ctr, mdl, rsim)
+function traj = make_trajectory(ctr, mdl, rsim, rbt)
 
 
 % decide to use predefined trajectory
@@ -21,7 +21,7 @@ traj.thrust_b_dot = zeros(1,(mdl.rt+1)*mdl.f);
 if traj.en
 
     % type of trajectory
-    traj.mode = 7;
+    traj.mode = 10;
 
     % time variables
     t      = mdl.T; % evolving variable for each time step
@@ -32,12 +32,13 @@ if traj.en
     if traj.mode == 1
 
         % horizontal circle
-        radius       = 0.06*1/0.82; % (m)
+        radius       = 0.24*1/0.82; % (m)
         angular_rate = 360; % (deg/s)
         center       = [0; 0; 0.09];
         center_r     = center + [radius*0.5; 0; 0];
         center_l     = center - [radius*0.5; 0; 0];
-        t_vec        = [2.1, 3, 4, 4.5, 5.5, 6, 7, 8] - 1.7*rsim.en; % (s)
+        % t_vec        = [2.1, 3, 4, 4.5, 5.5, 6, 7, 8] - 1.7*rsim.en; % (s)
+        t_vec        = [2.1, 3, 4, 4.5, 6, 6.5, 7.5, 8.5] - 1.7*rsim.en; % (s)
     
         while t <= mdl.rt
             if t <= t_vec(1)      
@@ -51,7 +52,7 @@ if traj.en
             elseif t <= t_vec(5)               
                 traj.rd(:,round(t*mdl.f)) = center + [radius*cosd(angular_rate*(t-t_vec(4))); radius*sind(-angular_rate*(t-t_vec(4))); 0;]; 
             elseif t <= t_vec(6)               
-                traj.rd(:,round(t*mdl.f)) = center_r + [0.5*radius*cosd(-angular_rate*(t-t_vec(5))); 0.5*radius*sind(-angular_rate*(t-t_vec(5))); 0;];  
+                traj.rd(:,round(t*mdl.f)) = center_l + [0.5*radius*cosd(-angular_rate*(t-t_vec(5))-180); -0.5*radius*sind(-angular_rate*(t-t_vec(5))); 0;];  
             elseif t <= t_vec(7)               
                 traj.rd(:,round(t*mdl.f)) = center;
             elseif t <= t_vec(8)
@@ -59,6 +60,132 @@ if traj.en
             end      
             t = t + mdl.T;
         end
+
+        traj.cf1  = 1.4;
+        traj.cf2  = 1.4;
+        traj.cf3  = 2;
+        traj.cf11 = 1.4;
+        traj.cf21 = 1.4;
+        traj.cf31 = 3.0;
+
+    elseif traj.mode == 8
+
+        % fast vertical circle 2025.04.03
+        radius       = 0.18; % (m)
+        angular_rate = 360; % (deg/s)
+        ratio        = 2;
+        center       = [0; 0; 0.18];
+        center_r     = center + [radius*0.5*ratio; 0; 0];
+        center_l     = center - [radius*0.5*ratio; 0; 0];
+        % t_vec        = [2.1, 3, 4, 4.5, 5.5, 6, 7, 8] - 1.7*rsim.en; % (s)
+        t_vec        = [2.1, 3, 4, 4.5, 6, 6.5, 7.5, 8.5] - 1.7*rsim.en; % (s)
+    
+        while t <= mdl.rt
+            if t <= t_vec(1)      
+                traj.rd(:,round(t*mdl.f)) = [0; 0; 0;];     
+            elseif t <= t_vec(2)        
+                traj.rd(:,round(t*mdl.f)) = center ./(t_vec(2)-t_vec(1)).*(t-t_vec(1));   
+            elseif t <= t_vec(3)        
+                traj.rd(:,round(t*mdl.f)) = center; 
+            elseif t <= t_vec(4)               
+                traj.rd(:,round(t*mdl.f)) = center_r + [0.5*ratio*radius*cosd(-angular_rate*(t-t_vec(3))+180); 0; 0.5*radius*sind(-angular_rate*(t-t_vec(3))+180);];    
+            elseif t <= t_vec(5)               
+                traj.rd(:,round(t*mdl.f)) = center + [      ratio*radius*cosd(angular_rate*(t-t_vec(4))); 0; radius*sind(-angular_rate*(t-t_vec(4)));]; 
+            elseif t <= t_vec(6)               
+                traj.rd(:,round(t*mdl.f)) = center_l + [0.5*ratio*radius*cosd(-angular_rate*(t-t_vec(5))-180); 0; -0.5*radius*sind(-angular_rate*(t-t_vec(5)));];  
+            elseif t <= t_vec(7)               
+                traj.rd(:,round(t*mdl.f)) = center;
+            elseif t <= t_vec(8)
+                traj.rd(:,round(t*mdl.f)) = center - center./(t_vec(8)-t_vec(7)).*(t-t_vec(7));
+            end      
+            t = t + mdl.T;
+        end
+
+        traj.cf1  = 1.25;
+        traj.cf2  = 1.4;
+        traj.cf3  = 5.5;
+        traj.cf11 = 1.3;
+        traj.cf21 = 1.4;
+        traj.cf31 = 5.5;
+
+    elseif traj.mode == 9
+
+        % horizontal circle
+        radius       = 0.36; % (m)
+        angular_rate = 360; % (deg/s)
+        center       = [0; 0; 0.09];
+        center_r     = center + [radius*0.5; 0; 0];
+        center_l     = center - [radius*0.5; 0; 0];
+        % t_vec        = [2.1, 3, 4, 4.5, 5.5, 6, 7, 8] - 1.7*rsim.en; % (s)
+        t_vec        = [2.1, 3, 4, 4.5, 6, 6.5, 7.5, 8.5] - 1.7*rsim.en; % (s)
+    
+        while t <= mdl.rt
+            if t <= t_vec(1)      
+                traj.rd(:,round(t*mdl.f)) = [0; 0; 0;];     
+            elseif t <= t_vec(2)        
+                traj.rd(:,round(t*mdl.f)) = center ./(t_vec(2)-t_vec(1)).*(t-t_vec(1));   
+            elseif t <= t_vec(3)        
+                traj.rd(:,round(t*mdl.f)) = center; 
+            elseif t <= t_vec(4)               
+                traj.rd(:,round(t*mdl.f)) = center_r + [0.5*radius*cosd(-angular_rate*(t-t_vec(3))+180); 0.5*radius*sind(-angular_rate*(t-t_vec(3))+180); 0;];    
+            elseif t <= t_vec(5)               
+                traj.rd(:,round(t*mdl.f)) = center + [radius*cosd(angular_rate*(t-t_vec(4))); radius*sind(-angular_rate*(t-t_vec(4))); 0;]; 
+            elseif t <= t_vec(6)               
+                traj.rd(:,round(t*mdl.f)) = center_l + [0.5*radius*cosd(-angular_rate*(t-t_vec(5))-180); -0.5*radius*sind(-angular_rate*(t-t_vec(5))); 0;];  
+            elseif t <= t_vec(7)               
+                traj.rd(:,round(t*mdl.f)) = center;
+            elseif t <= t_vec(8)
+                traj.rd(:,round(t*mdl.f)) = center - center./(t_vec(8)-t_vec(7)).*(t-t_vec(7));
+            end      
+            t = t + mdl.T;
+        end
+
+        traj.cf1  = 1.4;
+        traj.cf2  = 1.4;
+        traj.cf3  = 2;
+        traj.cf11 = 1.4;
+        traj.cf21 = 1.4;
+        traj.cf31 = 3.0;
+
+    elseif traj.mode == 10
+
+        % fast vertical circle 2025.04.03
+        radius       = 0.24; % (m)
+        angular_rate = 360; % (deg/s)
+        ratio        = 2.8;
+        center       = [0; 0; 0.20];
+        center_r     = center + [radius*0.5*ratio; 0; 0];
+        center_l     = center - [radius*0.5*ratio; 0; 0];
+        % t_vec        = [2.1, 3, 4, 4.5, 5.5, 6, 7, 8] - 1.7*rsim.en; % (s)
+        t_vec        = [2.1, 3, 4, 4.5, 6, 6.5, 7.5, 8.5] - 1.7*rsim.en; % (s)
+    
+        while t <= mdl.rt
+            if t <= t_vec(1)      
+                traj.rd(:,round(t*mdl.f)) = [0; 0; 0;];     
+            elseif t <= t_vec(2)        
+                traj.rd(:,round(t*mdl.f)) = center ./(t_vec(2)-t_vec(1)).*(t-t_vec(1));   
+            elseif t <= t_vec(3)        
+                traj.rd(:,round(t*mdl.f)) = center; 
+            elseif t <= t_vec(4)               
+                traj.rd(:,round(t*mdl.f)) = center_r + [0.5*ratio*radius*cosd(-angular_rate*(t-t_vec(3))+180); 0; 0.5*radius*sind(-angular_rate*(t-t_vec(3))+180);];    
+            elseif t <= t_vec(5)               
+                traj.rd(:,round(t*mdl.f)) = center + [      ratio*radius*cosd(angular_rate*(t-t_vec(4))); 0; radius*sind(-angular_rate*(t-t_vec(4)));]; 
+            elseif t <= t_vec(6)               
+                traj.rd(:,round(t*mdl.f)) = center_l + [0.5*ratio*radius*cosd(-angular_rate*(t-t_vec(5))-180); 0; -0.5*radius*sind(-angular_rate*(t-t_vec(5)));];  
+            elseif t <= t_vec(7)               
+                traj.rd(:,round(t*mdl.f)) = center;
+            elseif t <= t_vec(8)
+                traj.rd(:,round(t*mdl.f)) = center - center./(t_vec(8)-t_vec(7)).*(t-t_vec(7));
+            end      
+            t = t + mdl.T;
+        end
+
+        traj.cf1  = 1;
+        traj.cf2  = 1.4;
+        traj.cf3  = 1.5;
+        traj.cf11 = 1;
+        traj.cf21 = 1.4;
+        traj.cf31 = 1.5;
     
     
     elseif traj.mode == 2
@@ -72,12 +199,12 @@ if traj.en
         t_vec        = [2.1, 3, 4, 5, 6, 7, 7.9] - 1.7*rsim.en; % (s)
         % t_vec        = [2.1, 3, 4, 6, 8, 9, 9.9] - 1.7*rsim.en; % (s)
 
-        traj.cf1  = 1.6;
-        traj.cf2  = 1.6;
-        traj.cf3  = 2.3;
-        traj.cf11 = 2;
-        traj.cf21 = 2;
-        traj.cf31 = 4;
+        traj.cf1  = 3;
+        traj.cf2  = 1.4;
+        traj.cf3  = 2.2;
+        traj.cf11 = 4;
+        traj.cf21 = 1.8;
+        traj.cf31 = 3.5;
     
         while t <= mdl.rt
             if t <= t_vec(1)      
@@ -99,6 +226,13 @@ if traj.en
         end
 
     elseif traj.mode == 3
+
+        traj.cf1  = 1.6;
+        traj.cf2  = 1.6;
+        traj.cf3  = 2.3;
+        traj.cf11 = 2;
+        traj.cf21 = 2;
+        traj.cf31 = 4;
 
         % infinity
         radius       = 0.05; % (m)
@@ -125,6 +259,13 @@ if traj.en
         end
 
     elseif traj.mode == 4
+
+        traj.cf1  = 1.6;
+        traj.cf2  = 1.6;
+        traj.cf3  = 2.3;
+        traj.cf11 = 2;
+        traj.cf21 = 2;
+        traj.cf31 = 4;
 
         % vertical two circles
         radius       = 0.05; % (m)
@@ -356,25 +497,34 @@ if traj.en
 
     % compensate tether force
     traj.force_factor = 0;
-    if traj.mode == 1
-        traj.force_factor = 80; % 5
-    end
-    traj.rd_dd_add = traj.rd.*abs(traj.rd);
+    % if traj.mode == 1
+    %     traj.force_factor = 80; % 5
+    % end
+    traj.rd_dd_add = traj.rd; %.*abs(traj.rd);
     traj.rd_dd_add(1:2,:) = traj.rd_dd_add(1:2,:).*traj.force_factor;
 
     % saturation
     % limit = [1 5 20 300];
-    limit = [1 10 160 1600];
+    limit = [2 15 200 2000];
     
+    % get 1st order derivative
+    traj.rd_d    = max(-limit(1),min(limit(1),gradient(traj.rd)    ./mdl.T));
+
+    % compensate for drag force
+    traj.drag_force_factor = rsim.drag_coef.force;
+    traj.rd_dd_drag        = traj.rd_d .* traj.drag_force_factor ./ rbt.m;
+
     % get higher order derivative
-    traj.rd_d    = max(-limit(1),min(limit(1),gradient(traj.rd)./mdl.T));
-    traj.rd_dd   = max(-limit(2),min(limit(2),gradient(traj.rd_d)./mdl.T+traj.rd_dd_add));
-    traj.rd_ddd  = max(-limit(3),min(limit(3),gradient(traj.rd_dd)./mdl.T));
+    traj.rd_dd   = max(-limit(2),min(limit(2),gradient(traj.rd_d)  ./mdl.T  + traj.rd_dd_drag));
+    traj.rd_ddd  = max(-limit(3),min(limit(3),gradient(traj.rd_dd) ./mdl.T));
     traj.rd_dddd = max(-limit(4),min(limit(4),gradient(traj.rd_ddd)./mdl.T));
 
+
     % get desired thrust in acc
-    traj.thrust_b     = sqrt(sum(traj.rd_dd.^2));
-    traj.thrust_b_dot = gradient(traj.thrust_b)./mdl.T;
+    traj.rd_dd_grav      = traj.rd_dd;
+    traj.rd_dd_grav(3,:) = traj.rd_dd_grav(3,:) + 9.81*ones(1,length(traj.rd_dd_grav(3,:)));
+    traj.thrust_b        = sqrt(sum(traj.rd_dd_grav.^2));
+    traj.thrust_b_dot    = gradient(traj.thrust_b)./mdl.T;
     
     % plot trajectory
     if 1
@@ -416,13 +566,15 @@ if traj.en
         title("position")
         
         subplot(3,2,2)
-        plot(t_plot,traj.rd_d'); grid on
+        plot(t_plot,traj.rd_d'); hold on; grid on
+        plot(t_plot,sqrt(traj.rd_d(1,:).^2 + traj.rd_d(2,:).^2 +traj.rd_d(3,:).^2 )')
         xlim([1.8 t_vec(end)+0.2])
         % ylim([lower_bound,upper_bound])
         title("velocity")
         
         subplot(3,2,3)
-        plot(t_plot,traj.rd_dd'); grid on
+        plot(t_plot,traj.rd_dd'); hold on; grid on
+        plot(t_plot,sqrt(traj.rd_dd(1,:).^2 + traj.rd_dd(2,:).^2 +traj.rd_dd(3,:).^2 )')
         xlim([1.8 t_vec(end)+0.2])
         % ylim([lower_bound,upper_bound])
         title("acceleration")

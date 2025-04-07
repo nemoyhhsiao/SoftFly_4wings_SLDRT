@@ -1,7 +1,7 @@
 function [rbt] = make_robot()
 
     % Robot pysical parameters
-    rbt.m = 4 * 190e-6;      % mass in kg
+    rbt.m   = 4 * 190e-6;      % mass in kg
     rbt.ixx = 0.438*1e-7;    % MoI
     rbt.iyy = 0.438*1e-7;    % MoI
     rbt.izz = 0.438*1e-7 * 4;  % MoI
@@ -14,6 +14,10 @@ function [rbt] = make_robot()
 
     % Inclined stroke-plane version
     rbt.til = 0;
+
+    % Robot drag force/troque
+    rbt.drag_coef.force = 0.0014 * 1;         % drag_force = rsim.drag_coef.force * linear_velocity
+    rbt.drag_coef.torque = 1.2e-7 * 0.05 * 1; % 9.0e-7;      % drag_torque = rsim.drag_coef.torque * angular_velocity
 
     % rbt.base.th = 0.0 * rbt.m;
     % rbt.base.xt = 0.0 * 1e-5;

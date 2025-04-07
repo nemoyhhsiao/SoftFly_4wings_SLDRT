@@ -13,13 +13,13 @@ load_system(model_name)
 load('t2v_lut_20240404.mat')
 
 % Use simulation or Vicon data
-rsim.en = 0;
+rsim.en = 1;
 
 % Re-run controller (use archived data to rerun the experiment)
 mdl.rerun = 0;
 
 % Flight time for the model
-mdl.flight_time = 100;
+mdl.flight_time = 7;
 
 % Initialize controller parameters
 [ctr, mdl] = make_controller(mdl);
@@ -34,7 +34,7 @@ rbt = make_robot;
 [rsim, rbt] = make_simulation(rbt,mdl,rsim);
 
 % Initilaize pre-defined trajectory
-traj = make_trajectory(ctr, mdl, rsim);
+traj = make_trajectory(ctr, mdl, rsim, rbt);
 
 % Initialize external torque observer
 ctr = make_ext_tor_observer(rsim, mdl, ctr);

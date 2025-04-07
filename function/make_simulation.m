@@ -6,8 +6,8 @@ function [rsim, rbt] = make_simulation(rbt,mdl,rsim)
     rsim.mdl.T = 1 / rsim.mdl.f;
 
     % Initial conditions
-    rsim.Eul_XYZ.x = 0.15;
-    rsim.Eul_XYZ.y = 0.1;
+    rsim.Eul_XYZ.x = 0.0;
+    rsim.Eul_XYZ.y = 0.0;
     rsim.Eul_XYZ.z = 0;
     rsim.R0 = eul2rotm([rsim.Eul_XYZ.x rsim.Eul_XYZ.y rsim.Eul_XYZ.z],'XYZ');
     % rsim.R0 = [1; 0; 0; 0; 1; 0; 0; 0; 1];
@@ -23,8 +23,8 @@ function [rsim, rbt] = make_simulation(rbt,mdl,rsim)
     rsim.rbt.izz = 1.0 * rbt.izz;
 
     % Robot rotational dynamics damping
-    rsim.drag_coef.force = 2.5e-3;       % drag_force = rsim.drag_coef.force * linear_velocity
-    rsim.drag_coef.torque = 1e-8;%9.0e-7;      % drag_torque = rsim.drag_coef.torque * angular_velocity
+    rsim.drag_coef.force  = rbt.drag_coef.force;         % drag_force = rsim.drag_coef.force * linear_velocity
+    rsim.drag_coef.torque = rbt.drag_coef.torque; % 9.0e-7;      % drag_torque = rsim.drag_coef.torque * angular_velocity
 
     % Response delay for Vicon measurements
     rsim.delay.Vicon.time = 0.004;
@@ -36,7 +36,7 @@ function [rsim, rbt] = make_simulation(rbt,mdl,rsim)
     end
 
     % Response delay for actuator commands
-    rsim.delay.actuator.time = 0.015;
+    rsim.delay.actuator.time = 0.001;
     rsim.delay.actuator.n_steps = round(rsim.delay.actuator.time / mdl.T);
     if rsim.delay.actuator.n_steps > 0
         rsim.delay.actuator.init_val = ones(4, rsim.delay.actuator.n_steps) * rbt.m * mdl.g / 4;

@@ -10,7 +10,7 @@ function [ctr, mdl] = make_controller(mdl)
 
     % Voltage offset
     % ctr.DV = [-40 45 -80 60];
-    ctr.DV = [-25 60 -60 70];
+    ctr.DV = [-100 -100 -100 -100];
     % ctr.DV = [800 -1700 -1700 -1700]; % for checking connection
 
     % Use pre-defined trajectory
@@ -32,7 +32,8 @@ function [ctr, mdl] = make_controller(mdl)
     ctr.takeoff.time = 0.2;
 
     % Attitude controller gains [ att_d att_p pos_d pos_p ]
-    ctr.factor = [0.86 0.7 0.65 0.5]; % 0.55 0.5
+    % ctr.factor = [0.86 0.7 0.65 0.5]; % 0.55 0.5
+    ctr.factor = [0.95 0.95 0.95 1.1]; % 0.55 0.5
     ctr.gains = [62   798    6631   13608;     % #1 pakpong nominal gains
                  36   486    2916    6561;     % #2 (S+9)^4
                  48   864    6912   20736;     % #3 (S+12)^4
@@ -41,7 +42,7 @@ function [ctr, mdl] = make_controller(mdl)
                  60  1350   13500   50625; ... % #6 (S+15)^4
                  64  1536   16384   65536; ... % #7 (S+16)^4 % too aggressive
                  ].*ctr.factor; 
-    ctr.gain.n = 4; % 4
+    ctr.gain.n = 7; % 4
     
     % Check stability criterion
     rhStabilityCriterion([1,ctr.gains(ctr.gain.n,:)]);
@@ -56,14 +57,14 @@ function [ctr, mdl] = make_controller(mdl)
     
     % Attitude controller divide by g factor
     ctr.atmg.en            = 0;
-    ctr.gain.atmg.factor.x = 2.1;
-    ctr.gain.atmg.factor.y = 2.1;
+    ctr.gain.atmg.factor.x = 1;
+    ctr.gain.atmg.factor.y = 1;
 
     % Altitude controller gains (altitude)
-    ctr.gain.al0  = 150 * 0.5;  % p gain [0.55]
-    ctr.gain.al1  = 30 * 0.65;   % d gain [0.9]
-    ctr.gain.ali  = 15 * 0.7 *0.001;    % i gain [15]
-    ctr.gain.alfd = 0.2;           % feedforward (tether weight) [0.7 - 1.5]
+    ctr.gain.al0  = 150 * 1.2;  % p gain [0.55]
+    ctr.gain.al1  = 30 * 0.95;   % d gain [0.9]
+    ctr.gain.ali  = 15 * 0.7 *1;    % i gain [15]
+    ctr.gain.alfd = 0.0; % 0.2          % feedforward (tether weight) [0.7 - 1.5]
 
     % Yaw controller gains
     ctr.gain.yaw.fw = 1.78e-5;
@@ -79,7 +80,7 @@ function [ctr, mdl] = make_controller(mdl)
     % Torque offset
     ctr.torque_offset.x = 0;
     ctr.torque_offset.y = 0;
-    ctr.thrust_offset   = 0.05; % in acceleration
+    ctr.thrust_offset   = 0; % in acceleration
 
     % Torque/force limits
     ctr.lim.taux = 10.0e-5;
@@ -91,7 +92,7 @@ function [ctr, mdl] = make_controller(mdl)
     ctr.safety.enableZone.xmax = 0.6;
     ctr.safety.enableZone.ymax = 0.4;
     ctr.safety.enableZone.zmax = 0.5;
-    ctr.safety.volt = [1850, 1850, 1900, 1850];
+    ctr.safety.volt = [2000, 2000, 2000, 2000];
     ctr.safety.min_cos_roll_pitch = -0.5;
 
     % Desired yaw trajectory (if needed)
