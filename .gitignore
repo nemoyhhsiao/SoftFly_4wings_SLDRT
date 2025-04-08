@@ -22,3 +22,4 @@ slprj/_sfprj/precompile/autoInferAccessInfo.mat
 *.xml
 *.xml
 *.dmr
+/slprj

@@ -21,7 +21,7 @@ traj.thrust_b_dot = zeros(1,(mdl.rt+1)*mdl.f);
 if traj.en
 
     % type of trajectory
-    traj.mode = 10;
+    traj.mode = 1;
 
     % time variables
     t      = mdl.T; % evolving variable for each time step
@@ -150,9 +150,9 @@ if traj.en
     elseif traj.mode == 10
 
         % fast vertical circle 2025.04.03
-        radius       = 0.24; % (m)
+        radius       = 0.30; % (m)
         angular_rate = 360; % (deg/s)
-        ratio        = 2.8;
+        ratio        = 3.2;
         center       = [0; 0; 0.20];
         center_r     = center + [radius*0.5*ratio; 0; 0];
         center_l     = center - [radius*0.5*ratio; 0; 0];
@@ -180,12 +180,49 @@ if traj.en
             t = t + mdl.T;
         end
 
-        traj.cf1  = 1;
+        traj.cf1  = 0.9;
         traj.cf2  = 1.4;
-        traj.cf3  = 1.5;
+        traj.cf3  = 1.4;
+        traj.cf11 = 0.9;
+        traj.cf21 = 1.4;
+        traj.cf31 = 1.4;
+
+    elseif traj.mode == 11
+
+        % fast vertical circle 2025.04.03
+        radius       = 0.20; % (m)
+        angular_rate = 360; % (deg/s)
+        ratio        = 3.8;
+        center       = [0; 0; 0.05;];
+        right_p      = [0.3; 0; 0.05];
+        left_p       = [-0.3; 0; 0.05];
+        % t_vec        = [2.1, 3, 4, 4.5, 5.5, 6, 7, 8] - 1.7*rsim.en; % (s)
+        % t_vec        = [2.1, 3, 4, 6, 7, 8] - 1.7*rsim.en; % (s)
+        t_vec        = [2.1, 3, 3.2, 4.2, 4.4, 5.4] - 1.7*rsim.en; % (s)
+    
+        while t <= mdl.rt
+            if t <= t_vec(1)      
+                traj.rd(:,round(t*mdl.f)) = [0; 0; 0;];     
+            elseif t <= t_vec(2)        
+                traj.rd(:,round(t*mdl.f)) = right_p ./(t_vec(2)-t_vec(1)).*(t-t_vec(1));   
+            elseif t <= t_vec(3)        
+                traj.rd(:,round(t*mdl.f)) = right_p + (center - right_p) ./ (t_vec(3)-t_vec(2)).*(t-t_vec(2)); 
+            elseif t <= t_vec(4)               
+                traj.rd(:,round(t*mdl.f)) = center + [ ratio*radius*cosd(-angular_rate*(t-t_vec(3))-90); 0; radius + radius*sind(-angular_rate*(t-t_vec(3))-90);];    
+            elseif t <= t_vec(5)               
+                traj.rd(:,round(t*mdl.f)) = center + (left_p - center) ./ (t_vec(5)-t_vec(4)).*(t-t_vec(4)); 
+            elseif t <= t_vec(6)               
+                traj.rd(:,round(t*mdl.f)) = left_p - left_p ./(t_vec(6)-t_vec(5)).*(t-t_vec(5)); 
+            end      
+            t = t + mdl.T;
+        end
+
+        traj.cf1  = 1.4;
+        traj.cf2  = 1.4;
+        traj.cf3  = 1.3;
         traj.cf11 = 1;
         traj.cf21 = 1.4;
-        traj.cf31 = 1.5;
+        traj.cf31 = 0.95;
     
     
     elseif traj.mode == 2

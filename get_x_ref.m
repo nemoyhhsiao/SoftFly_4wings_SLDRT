@@ -34,10 +34,11 @@ time  = t;
 x_ref = [x, v, q, w, u];
 u_ref = u;
 
-save("data/feasible_fast_vertical_circle_w_drag_ui=0p55.mat", "t", "x_ref", "u_ref")
+save("data/feasible_fast_vertical_circle_w_drag_ui=0p38.mat", "t", "x_ref", "u_ref")
 
 figure()
 plot(u_ref)
+grid on
 
 function motors_thrust = wrench2thrusts(torque, total_thrust, rbt)
 
