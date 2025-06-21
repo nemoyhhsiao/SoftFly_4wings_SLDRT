@@ -8,11 +8,11 @@ function [rsim, rbt] = make_simulation(rbt,mdl,rsim)
     % Initial conditions
     rsim.Eul_XYZ.x = 0.0;
     rsim.Eul_XYZ.y = 0.0;
-    rsim.Eul_XYZ.z = 0;
+    rsim.Eul_XYZ.z = deg2rad(60);
     rsim.R0 = eul2rotm([rsim.Eul_XYZ.x rsim.Eul_XYZ.y rsim.Eul_XYZ.z],'XYZ');
     % rsim.R0 = [1; 0; 0; 0; 1; 0; 0; 0; 1];
     rsim.w0 = [0, 0, 0];
-    rsim.p0 = [0.02, 0.04, 0.01];
+    rsim.p0 = [0, 0, 0];
     rsim.v0 = [0, 0, 0];
     rsim.v0_b = (rsim.R0*rsim.v0')';
 

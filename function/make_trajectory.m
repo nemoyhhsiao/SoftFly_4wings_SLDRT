@@ -21,7 +21,7 @@ traj.thrust_b_dot = zeros(1,(mdl.rt+1)*mdl.f);
 if traj.en
 
     % type of trajectory
-    traj.mode = 1;
+    traj.mode = 9;
 
     % time variables
     t      = mdl.T; % evolving variable for each time step
@@ -38,7 +38,7 @@ if traj.en
         center_r     = center + [radius*0.5; 0; 0];
         center_l     = center - [radius*0.5; 0; 0];
         % t_vec        = [2.1, 3, 4, 4.5, 5.5, 6, 7, 8] - 1.7*rsim.en; % (s)
-        t_vec        = [2.1, 3, 4, 4.5, 6, 6.5, 7.5, 8.5] - 1.7*rsim.en; % (s)
+        t_vec        = [2.1, 2.5000    3.0000    3.5000    5.0000    5.5000    6  6.5] - 1.7*rsim.en; % (s)
     
         while t <= mdl.rt
             if t <= t_vec(1)      
@@ -111,13 +111,13 @@ if traj.en
     elseif traj.mode == 9
 
         % horizontal circle
-        radius       = 0.36; % (m)
+        radius       = 0.40; % (m)
         angular_rate = 360; % (deg/s)
         center       = [0; 0; 0.09];
         center_r     = center + [radius*0.5; 0; 0];
         center_l     = center - [radius*0.5; 0; 0];
         % t_vec        = [2.1, 3, 4, 4.5, 5.5, 6, 7, 8] - 1.7*rsim.en; % (s)
-        t_vec        = [2.1, 3, 4, 4.5, 6, 6.5, 7.5, 8.5] - 1.7*rsim.en; % (s)
+        t_vec        = [2.1, 2.5000    3.0000    3.5000    5.0000    5.5000    6  6.5] - 1.7*rsim.en; % (s)
     
         while t <= mdl.rt
             if t <= t_vec(1)      
@@ -189,7 +189,7 @@ if traj.en
 
     elseif traj.mode == 11
 
-        % fast vertical circle 2025.04.03
+        % fast vertical circle 2025.04.09
         radius       = 0.20; % (m)
         angular_rate = 360; % (deg/s)
         ratio        = 3.8;
