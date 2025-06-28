@@ -9,19 +9,19 @@ else
 end
 
 % initialize the variables
-traj.rd           = zeros(3,(mdl.rt+1)*mdl.f);
-traj.rd_d         = zeros(3,(mdl.rt+1)*mdl.f);
-traj.rd_dd        = zeros(3,(mdl.rt+1)*mdl.f);
-traj.rd_ddd       = zeros(3,(mdl.rt+1)*mdl.f);
-traj.rd_dddd      = zeros(3,(mdl.rt+1)*mdl.f);
-traj.thrust_b     = zeros(1,(mdl.rt+1)*mdl.f);
-traj.thrust_b_dot = zeros(1,(mdl.rt+1)*mdl.f);
+traj.rd           = zeros(3,round((mdl.rt+1)*mdl.f));
+traj.rd_d         = zeros(3,round((mdl.rt+1)*mdl.f));
+traj.rd_dd        = zeros(3,round((mdl.rt+1)*mdl.f));
+traj.rd_ddd       = zeros(3,round((mdl.rt+1)*mdl.f));
+traj.rd_dddd      = zeros(3,round((mdl.rt+1)*mdl.f));
+traj.thrust_b     = zeros(1,round((mdl.rt+1)*mdl.f));
+traj.thrust_b_dot = zeros(1,round((mdl.rt+1)*mdl.f));
 
 % define trajectory
 if traj.en
 
     % type of trajectory
-    traj.mode = 9;
+    traj.mode = 5;
 
     % time variables
     t      = mdl.T; % evolving variable for each time step
@@ -110,7 +110,7 @@ if traj.en
 
     elseif traj.mode == 9
 
-        % horizontal circle
+        % horizontal circle 2025.04.03
         radius       = 0.40; % (m)
         angular_rate = 360; % (deg/s)
         center       = [0; 0; 0.09];
@@ -227,13 +227,13 @@ if traj.en
     
     elseif traj.mode == 2
 
-        % vertical two circles
+        % vertical two circles 2024.11.09 / 2025.06.23
         radius       = 0.05*1/0.865; % (m)
         angular_rate = 360; % (deg/s)
         center       = [0; 0; 0.15];
         center_r     = center + [radius; 0; 0];
         center_l     = center - [radius; 0; 0];
-        t_vec        = [2.1, 3, 4, 5, 6, 7, 7.9] - 1.7*rsim.en; % (s)
+        t_vec        = [2.1, 3, 4, 5, 6, 7, 7.9] - 1.7*rsim.en + 1; % (s)
         % t_vec        = [2.1, 3, 4, 6, 8, 9, 9.9] - 1.7*rsim.en; % (s)
 
         traj.cf1  = 3;
@@ -340,18 +340,25 @@ if traj.en
         center       = [0; 0; 0.15];
         center_r     = center + [radius; 0; 0];
         center_l     = center - [radius; 0; 0];
-        t_vec        = [2.1, 3, 4, 34, 0, 35, 36]; % (s)
+        t_vec        = [2.1, 3, 4, 34, 0, 35, 36] - 1.9*rsim.en + 1; % (s)
 
-        t1 = 5;
-        t2 = 6;
+        t1 = 5 - 1.9*rsim.en + 1;
+        t2 = 6 - 1.9*rsim.en + 1;
         R = eul2rotm([0 0 pi/15], 'XYZ');
 
-        traj.cf1  = 1.6;
-        traj.cf2  = 1.6;
-        traj.cf3  = 2.3;
-        traj.cf11 = 2;
-        traj.cf21 = 2;
-        traj.cf31 = 4;
+        traj.cf1  = 2;
+        traj.cf2  = 2;
+        traj.cf3  = 2;
+        traj.cf11 = 3;
+        traj.cf21 = 3;
+        traj.cf31 = 3;
+
+        % traj.cf1  = 1.6;
+        % traj.cf2  = 1.6;
+        % traj.cf3  = 2.3;
+        % traj.cf11 = 2;
+        % traj.cf21 = 2;
+        % traj.cf31 = 4;
     
         while t <= mdl.rt
             if t <= t_vec(1)

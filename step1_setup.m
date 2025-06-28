@@ -10,16 +10,17 @@ model_name = 'controller14';
 load_system(model_name) 
 
 % Load look-up table for thrust to voltage mapping
-load('t2v_lut_20240404.mat')
+% load('t2v_lut_20240404.mat')
+lut = gen_lut;
 
 % Use simulation or Vicon data
-rsim.en = 1;
+rsim.en = 0;
 
 % Re-run controller (use archived data to rerun the experiment)
 mdl.rerun = 0;
 
 % Flight time for the model
-mdl.flight_time = 5;
+mdl.flight_time = 34;
 
 % Initialize controller parameters
 [ctr, mdl] = make_controller(mdl);

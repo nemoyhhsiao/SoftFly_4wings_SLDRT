@@ -9,9 +9,8 @@ function [ctr, mdl] = make_controller(mdl)
     ctr.freq_vec = [330 330 330 330];
 
     % Voltage offset
-    % ctr.DV = [-40 45 -80 60];
-    ctr.DV = [-100 -100 -100 -100];
-    % ctr.DV = [800 -1700 -1700 -1700]; % for checking connection
+    ctr.DV = [ 28    28   -32   -32]; % 2025.05.24 Bee 22 (V_n = 1732) [] - ones(1,4) .* 1732
+    % ctr.DV = [100    70   130   160]; % Larger Bee1 2025.06.26 (V_n = 1732) [] - ones(1,4) .* 1450
 
     % Use pre-defined trajectory
     ctr.traj.en = 1;
@@ -22,18 +21,19 @@ function [ctr, mdl] = make_controller(mdl)
     % Setpoint (relative to the initital position)
     ctr.setpoint.x = 0;
     ctr.setpoint.y = 0;
-    ctr.setpoint.z = 0.02;
+    ctr.setpoint.z = 0.1;
     ctr.setpoint.yaw = deg2rad(0);
 
     % Landing and takeoff parameters
-    ctr.landing.en = 0;
-    ctr.landing.time = 0.4;
     ctr.takeoff.en = 1;
-    ctr.takeoff.time = 0.2;
+    ctr.takeoff.time = 1.5;
+    ctr.landing.en = 1;
+    ctr.landing.time = 1;
 
-    % Attitude controller gains [ att_d att_p pos_d pos_p ]
+    % % Attitude controller gains [ att_d att_p pos_d pos_p ]
     % ctr.factor = [0.86 0.7 0.65 0.5]; % 0.55 0.5
-    ctr.factor = [0.95 0.95 0.95 1.1]; % 0.55 0.5
+    ctr.factor = [0.88 0.72 0.72 0.68]; % 0.55 0.5
+    % ctr.factor = [0.95 0.80 0.89 0.82]; % 0.55 0.5
     ctr.gains = [62   798    6631   13608;     % #1 pakpong nominal gains
                  36   486    2916    6561;     % #2 (S+9)^4
                  48   864    6912   20736;     % #3 (S+12)^4
@@ -42,7 +42,7 @@ function [ctr, mdl] = make_controller(mdl)
                  60  1350   13500   50625; ... % #6 (S+15)^4
                  64  1536   16384   65536; ... % #7 (S+16)^4 % too aggressive
                  ].*ctr.factor; 
-    ctr.gain.n = 7; % 4
+    ctr.gain.n = 4; % 4
     
     % Check stability criterion
     rhStabilityCriterion([1,ctr.gains(ctr.gain.n,:)]);
@@ -52,7 +52,7 @@ function [ctr, mdl] = make_controller(mdl)
     ctr.gain.at2  = ctr.gains(ctr.gain.n,2); % attitude p
     ctr.gain.at1  = ctr.gains(ctr.gain.n,3); % position d
     ctr.gain.at0  = ctr.gains(ctr.gain.n,4); % position p
-    ctr.gain.ati  = 2e-4 *0.15; % world p error to body torque -> i gain
+    ctr.gain.ati  = 2e-4 *0.3; % world p error to body torque -> i gain
     ctr.gain.atfd = ctr.gain.at0 * 0; 
     
     % Attitude controller divide by g factor
@@ -92,8 +92,10 @@ function [ctr, mdl] = make_controller(mdl)
     ctr.safety.enableZone.xmax = 0.6;
     ctr.safety.enableZone.ymax = 0.4;
     ctr.safety.enableZone.zmax = 0.5;
-    ctr.safety.volt = [2000, 2000, 2000, 2000];
+    % ctr.safety.volt = [2000, 2000, 2000, 2000];
+    ctr.safety.volt = [1900, 1900, 1900, 1900];
     ctr.safety.min_cos_roll_pitch = -0.5;
+    ctr.safety.data_ready_T = 0.02;
 
     % Desired yaw trajectory (if needed)
     ctr.yaw.dy.en = 0;
